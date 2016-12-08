@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <meta name="description" content="">
+        <title></title>
+        <!-- CSS-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+        <link href="/css/main.css" type="text/css" rel="stylesheet" media="screen,projection">
+    </head>
+    <body>
+        <div id="header">
+            <ul v-for="navLink in navLinks" v-if="navLink.dropdown" v-bind:id="navLink.name" class="dropdown-content">
+                <li v-for="link in navLink.links">
+                    <a v-bind:href="link.url" class="nav-link">{{ link.name }}</a>
+                </li>
+            </ul>
+            <!-- navbar-->
+            <div class="navbar-fixed">
+                <nav role="navigation" class="white">
+                    <div class="nav-wrapper container">
+                        <a id="logo-container" href="#!/" class="brand-logo nav-link">{{ brandLogo }}</a>
+                        <ul class="right hide-on-med-and-down">
+                            <li v-for="navLink in navLinks">
+                                <a v-if="navLink.dropdown" data-beloworigin="true" data-hover="true" v-bind:data-activates="navLink.name" class="dropdown-button">
+                                    {{ navLink.name }}
+                                </a>
+                                <a v-else v-bind:href="navLink.url" class="nav-link">{{ navLink.name }}</a>
+                            </li>
+                        </ul>
+                        <ul id="nav-mobile" class="side-nav">
+                            <ul class="collapsible collapsible-accordion">
+                                <li v-for="navLink in navLinks" class="bold">
+                                    <a v-if="navLink.dropdown" class="collapsible-header waves-effect waves-teal">{{ navLink.name }}</a>
+                                    <a v-else v-bind:href="navLink.url" class="nav-mobile-link">{{ navLink.name }}</a>
+                                    <div v-if="navLink.dropdown" class="collapsible-body">
+                                        <ul>  
+                                            <li v-for="link in navLink.links">
+                                                <a v-bind:href="link.url" class="nav-mobile-link">{{ link.name }}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </ul>
+                        <a data-activates="nav-mobile" href="#" class="button-collapse"><i class="material-icons">menu</i></a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <main id="app">
+            <div v-for="content in contents" v-if="content.class=='parallax'" class="parallax-container" id="index-banner">
+                <div class="section no-pad-bot">
+                    <div class="container">
+                        <br><br>
+                        <h1 v-if="content.title" class="header center teal-text text-lighten-2">{{ content.title }}</h1>
+                        <div v-if="content.text" class="row center">
+                            <h5 class="header col s12 light">{{ content.text }}</h5>
+                        </div>
+                        <div v-if="content.buttonName" class="row center">
+                            <a href="#" class="btn-large waves-effect waves-light teal lighten-1" v-bind:href="content.url">{{ content.buttonName }}</a>
+                        </div>
+                        <br><br>
+                    </div>
+                </div>
+                <div class="parallax"><img v-bind:src="content.imageUrl"></div>
+            </div>
+            <div v-for="content in contents" v-if="content.class=='container'" class="container">
+                <div class="section">
+                    <div class="row">
+                        <div v-for="col in content.cols" class="col s12" v-bind:class="{ m12: content.colNum==1, m6: content.colNum==2, m4: content.colNum==3 }">
+                            <div class="icon-block">
+                                <h2 v-if="col.icon" class="center brown-text">
+                                    <i class="material-icons">{{ col.icon }}</i>
+                                </h2>
+                                <h5 v-if="col.title" class="center">{{ col.title }}</h5>
+                                <div v-if="col.text">
+                                    <div v-for="text in col.text" v-if="col.markdown" class="light" v-html="marked(text)">
+                                    </div>
+                                    <div v-for="text in col.text" v-else class="light">
+                                        {{ text }}
+                                    </div>
+                                </div>
+        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-for="content in contents" v-if="content.class=='markdown'" class="container">
+                <div class="section">
+                    <div v-html="marked(content.text)" class="row">
+                    </div>
+                </div>
+            </div>
+            <div v-for="content in contents" v-if="content.class=='editor'" class="container">
+                <div class="section">
+                    <div v-html="marked(content.text)" class="row">
+                    </div>
+                    <div class="divider">
+                    </div>
+                    <textarea v-model="content.text" class="materialize-textarea"></textarea>
+                </div>
+            </div>
+        </main>
+        <div id="footer">
+            <footer class="page-footer teal lighten-2">
+                <div class="container">
+                    <div class="row">
+                        <div class="col l9 s12">
+                            <h5 class="white-text">Company Bio</h5>
+                            <div class="grey-text text-lighten-4" v-for="text in footerText">
+                                {{ text }} <br/>
+                            </div>
+                        </div>
+                        <div class="col l3 s12">
+                            <h5 class="white-text">Connect</h5>
+                            <ul>
+                                <li v-for="connectLink in connectLinks">
+                                    <a v-bind:href="connectLink.url" target="_blank" class="white-text">{{ connectLink.title }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-copyright">
+                    <div class="container">
+                        <span>{{ brandLogo }}</span> &copy; 2016 
+                        -    
+                        Powered by 
+                        <a href="https://www.gidcs.net/" target="_blank" class="brown-text text-lighten-1">GIDCS LTD</a>.
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.4/vue.min.js"></script>
+        <script src="/js/content.js"></script>
+        <script src="/js/main.js"></script>
+    </body>
+</html>
